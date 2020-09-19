@@ -1,6 +1,7 @@
 package com.example.zacharysy_networking;
 
-import com.example.zacharysy_networking.utilities.NetworkUtils;
+import com.example.zacharysy_networking.utilities.PokeAPI;
+import com.example.zacharysy_networking.utilities.Pokemon;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        makeNetworkSearchQuery();
+//        makeNetworkSearchQuery();
 
         // Connect to View
         textView = (TextView) findViewById(R.id.textView);
@@ -38,11 +39,16 @@ public class MainActivity extends AppCompatActivity {
         searchButton = (Button) findViewById(R.id.searchButton);
         resetButton = (Button) findViewById(R.id.resetButton);
 
+        for(Pokemon pokemon: PokeAPI.shared.pokemon){
+            textView.append(pokemon.name);
+        }
+
+
         // Event Listeners
         resetButton.setOnClickListener(
                 new View.OnClickListener(){
                     public void onClick(View v){
-                        makeNetworkSearchQuery();
+//                        makeNetworkSearchQuery();
                     }
                 }
         );
@@ -67,41 +73,41 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void makeNetworkSearchQuery(){
-        new FetchNetworkData().execute();
-    }
+//    public void makeNetworkSearchQuery(){
+//        new FetchNetworkData().execute();
+//    }
 
-    public class FetchNetworkData extends AsyncTask<String, Void, String>{
-        @Override
-        protected String doInBackground(String... params) {
-            URL searchURL = NetworkUtils.bulidCountriesUrl();
-            String responseString = null;
-
-            try{
-                responseString = NetworkUtils.getResponseFromUrl(searchURL);
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-
-            return responseString;
-        }
-
-        @Override
-        protected void onPostExecute(String responseData) {
-            super.onPostExecute(responseData);
-            ArrayList<String> countries = NetworkUtils.parseCountriesJson(responseData);
-
-            try{
-                for(String name: countries){
-                    textView.append("\n\n" + name);
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
-
-        }
-    }
+//    public class FetchNetworkData extends AsyncTask<String, Void, String>{
+//        @Override
+//        protected String doInBackground(String... params) {
+//            URL searchURL = NetworkUtils.bulidCountriesUrl();
+//            String responseString = null;
+//
+//            try{
+//                responseString = NetworkUtils.getResponseFromUrl(searchURL);
+//            }catch(Exception e){
+//                e.printStackTrace();
+//            }
+//
+//            return responseString;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String responseData) {
+//            super.onPostExecute(responseData);
+//            ArrayList<String> countries = NetworkUtils.parseCountriesJson(responseData);
+//
+//            try{
+//                for(String name: countries){
+//                    textView.append("\n\n" + name);
+//                }
+//            }catch (Exception e){
+//                e.printStackTrace();
+//            }
+//
+//
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
