@@ -2,6 +2,7 @@ package com.example.zacharysy_networking;
 
 import com.example.zacharysy_networking.utilities.PokeAPI;
 import com.example.zacharysy_networking.utilities.Pokemon;
+import com.squareup.picasso.Picasso;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText textField;
     private Button searchButton;
     private Button resetButton;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +42,16 @@ public class MainActivity extends AppCompatActivity {
         textField = (EditText) findViewById(R.id.textField);
         searchButton = (Button) findViewById(R.id.searchButton);
         resetButton = (Button) findViewById(R.id.resetButton);
+        imageView = (ImageView) findViewById(R.id.imageView);
 
-
+        final String defaultDisplayText = textView.getText().toString();
 
         // Event Listeners
         resetButton.setOnClickListener(
                 new View.OnClickListener(){
                     public void onClick(View v){
+                        textView.setText(defaultDisplayText);
+
                         makeNetworkSearchQuery();
                     }
                 }
@@ -57,11 +63,29 @@ public class MainActivity extends AppCompatActivity {
                         String query = textField.getText().toString().toLowerCase();
                         String countries = textView.getText().toString();
                         String[] countriesList = countries.split("\n");
-                        for(String country: countriesList){
-                            if(country.toLowerCase().equals(query)){
-                                textView.setText(country);
+                        String url = "";
+
+                        for(String entry: countriesList){
+                            if(entry.toLowerCase().equals(query)){
+                                textView.setText(entry);
+
+                                try {
+                                    url = "https://www.serebii.net/pokemongo/pokemon/" + entry.substring(0,3) + ".png";
+                                    Picasso.get().load(url).into(imageView);
+                                } catch (Exception e) {
+
+                                }
+
                                 break;
                             }else{
+
+                                try {
+                                    url = "https://archive-media-1.nyafuu.org/vp/image/1501/41/1501419430416.gif";
+                                    Picasso.get().load(url).into(imageView);
+                                } catch (Exception e) {
+
+                                }
+
                                 textView.setText("No results match.");
                             }
                         }
@@ -93,10 +117,19 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String responseData) {
             super.onPostExecute(responseData);
-            ArrayList<Pokemon> pokemon = PokeAPI.generatePokemon(responseData);
+            ArrayList<Pokemon> pokedex = PokeAPI.generatePokemon(responseData);
 
             // DO STUFF WITH THE POKEMON
+            for (Pokemon pokemon : pokedex) {
+                textView.append("\n\n" + pokemon.num + " " + pokemon.name);
 
+            }
+
+            try {
+                Picasso.get().load(pokedex.get(0).spriteURL).into(imageView);
+            } catch (Exception e) {
+
+            }
 
         }
     }
