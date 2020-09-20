@@ -78,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
     public class FetchNetworkData extends AsyncTask<String, Void, String>{
         @Override
         protected String doInBackground(String... params) {
-            URL listURL = PokeAPI.createURL("https://pokeapi.co/api/v2/pokemon?limit=100");
+            URL listURL = PokeAPI.createURL("https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json");
             String pokemonListString = null;
-            
+
             try {
                 pokemonListString = PokeAPI.getResponseFromUrl(listURL);
             } catch (IOException e) {
