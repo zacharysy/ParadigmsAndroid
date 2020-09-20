@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private Button searchButton;
     private Button resetButton;
     private ImageView imageView;
+    public ArrayList<Pokemon> pokedex = new ArrayList<Pokemon>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v){
                         textView.setText(defaultDisplayText);
 
+                        textField.setText("");
+
                         makeNetworkSearchQuery();
                     }
                 }
@@ -64,30 +67,35 @@ public class MainActivity extends AppCompatActivity {
                         String countries = textView.getText().toString();
                         String[] countriesList = countries.split("\n");
                         String url = "";
+                        textView.setText("");
+                        boolean noResults = true;
+                        boolean imageSet = false;
 
-                        for(String entry: countriesList){
-                            if(entry.toLowerCase().equals(query)){
-                                textView.setText(entry);
+                        for (Pokemon pokemon : pokedex) {
+                            if (pokemon.name.toLowerCase().contains(query)) {
+                                noResults = false;
+                                textView.append(pokemon.num + " " + pokemon.name + "\n");
+                                if (!imageSet) {
+                                    try {
+                                        url = pokemon.spriteURL;
+                                        Picasso.get().load(url).into(imageView);
+                                    } catch (Exception e) {
 
-                                try {
-                                    url = "https://www.serebii.net/pokemongo/pokemon/" + entry.substring(0,3) + ".png";
-                                    Picasso.get().load(url).into(imageView);
-                                } catch (Exception e) {
-
+                                    }
+                                    imageSet = true;
                                 }
-
-                                break;
-                            }else{
-
-                                try {
-                                    url = "https://archive-media-1.nyafuu.org/vp/image/1501/41/1501419430416.gif";
-                                    Picasso.get().load(url).into(imageView);
-                                } catch (Exception e) {
-
-                                }
-
-                                textView.setText("No results match.");
                             }
+                        }
+
+                        if (noResults) {
+                            try {
+                                url = "https://archive-media-1.nyafuu.org/vp/image/1501/41/1501419430416.gif";
+                                Picasso.get().load(url).into(imageView);
+                            } catch (Exception e) {
+
+                            }
+
+                            textView.setText("No results match.");
                         }
                     }
                 }
@@ -117,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String responseData) {
             super.onPostExecute(responseData);
-            ArrayList<Pokemon> pokedex = PokeAPI.generatePokemon(responseData);
+            pokedex = PokeAPI.generatePokemon(responseData);
 
             // DO STUFF WITH THE POKEMON
             for (Pokemon pokemon : pokedex) {
