@@ -13,32 +13,26 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class PokeAPI {
-	public static PokeAPI shared = new PokeAPI();
+	public static ArrayList<Pokemon> generatePokemon(String pokemonListString){
+		ArrayList<Pokemon> pokemon = new ArrayList<Pokemon>();
 
-	public ArrayList<Pokemon> pokemon = new ArrayList<Pokemon>();
-	
-	public PokeAPI(){
-		try{
-			URL listURL = createURL("https://pokeapi.co/api/v2/pokemon?limit=100");
-			String pokemonListString = getResponseFromUrl(listURL);
+		try {
 
 			JSONObject pokemonListContainer = new JSONObject(pokemonListString);
-			JSONArray pokemonList = pokemonListContainer.getJSONArray("results");
+			JSONArray pokemonList = pokemonListContainer.getJSONArray("pokemon");
 
 			for(int i = 0; i < pokemonList.length(); i++){
-				JSONObject newPokemon = pokemonList.getJSONObject(0);
-				String pokeString = newPokemon.getString("url");
-				URL pokeURL = createURL(pokeString);
-				JSONObject pokeData = new JSONObject(getResponseFromUrl(pokeURL));
+				JSONObject pokeData = pokemonList.getJSONObject(i);
 				Pokemon poke = new Pokemon(pokeData);
 
 				pokemon.add(poke);
 			}
-		}catch(JSONException e){
-			e.printStackTrace();
-		}catch(IOException e){
+
+		} catch (JSONException e){
 			e.printStackTrace();
 		}
+
+		return pokemon;
 	}
 
 	// PokeAPI

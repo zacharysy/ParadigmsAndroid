@@ -9,57 +9,44 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class Pokemon{
+	public int num;
 	public String name;
 	public ArrayList<String> types;
-	public int hp;
-	public int attack;
-	public int defense;
-	public int spAtk;
-	public int spDfns;
-	public int speed;
 	public URL spriteURL;
 
-	public Pokemon(String name, ArrayList<String> types, int hp, int attack, int defense, int spAtk, int spDfns, int speed){
+	public Pokemon(int num, String name, ArrayList<String> types, URL spriteURL){
+		this.num = num;
 		this.name = name;
 		this.types = types;
-		this.hp = hp;
-		this.attack = attack;
-		this.defense = defense;
-		this.spAtk = spAtk;
-		this.spDfns = spDfns;
-		this.speed = speed;
+		this.spriteURL = spriteURL;
 	}
 
 	public Pokemon(JSONObject pokeJSON){
 		try{
-			this.name = ((JSONObject) pokeJSON.getJSONArray("forms").get(0)).getString("name");
+			int num = pokeJSON.getInt("num");
+			String name = pokeJSON.getString("name");
 
 			ArrayList<String> types = new ArrayList<String>();
-			JSONArray typesArray = pokeJSON.getJSONArray("types");
+			JSONArray typesArray = pokeJSON.getJSONArray("type");
 
 			for(int i = 0; i < typesArray.length(); i++) {
-				String typeString = ((JSONObject) typesArray.get(i)).getJSONObject("type").getString("name");
+				String typeString = typesArray.getString(i);
 				types.add(typeString);
 			}
 
-			this.types = types;
-
-			JSONArray stats = pokeJSON.getJSONArray("stats");
-			this.hp = ((JSONObject) stats.get(0)).getInt("base_stats");
-			this.attack = ((JSONObject) stats.get(1)).getInt("base_stats");
-			this.defense = ((JSONObject) stats.get(2)).getInt("base_stats");
-			this.spAtk = ((JSONObject) stats.get(3)).getInt("base_stats");
-			this.spDfns = ((JSONObject) stats.get(4)).getInt("base_stats");
-			this.speed = ((JSONObject) stats.get(5)).getInt("base_stats");
-
-			JSONObject sprites = pokeJSON.getJSONObject("sprites");
-			String spriteURLString = sprites.getString("front_default");
+			String spriteURLString = pokeJSON.getString("img");
+			URL spriteURL = null;
 
 			try{
-				this.spriteURL = new URL(spriteURLString);
+				spriteURL = new URL(spriteURLString);
 			}catch(MalformedURLException e){
 				e.printStackTrace();
 			}
+
+			this.num = num;
+			this.name = name;
+			this.types = types;
+			this.spriteURL = spriteURL;
 
 		}catch(JSONException e){
 			e.printStackTrace();
