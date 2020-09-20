@@ -9,12 +9,12 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class Pokemon{
-	public int num;
+	public String num;
 	public String name;
 	public ArrayList<String> types;
-	public URL spriteURL;
+	public String spriteURL;
 
-	public Pokemon(int num, String name, ArrayList<String> types, URL spriteURL){
+	public Pokemon(String num, String name, ArrayList<String> types, String spriteURL){
 		this.num = num;
 		this.name = name;
 		this.types = types;
@@ -23,7 +23,7 @@ public class Pokemon{
 
 	public Pokemon(JSONObject pokeJSON){
 		try{
-			int num = pokeJSON.getInt("num");
+			String num = pokeJSON.getString("num");
 			String name = pokeJSON.getString("name");
 
 			ArrayList<String> types = new ArrayList<String>();
@@ -35,6 +35,9 @@ public class Pokemon{
 			}
 
 			String spriteURLString = pokeJSON.getString("img");
+			char secureChar = 's';
+			StringBuilder stringBuilder = new StringBuilder(spriteURLString);
+			spriteURLString = spriteURLString.substring(0, 4) + secureChar + spriteURLString.substring(4);
 			URL spriteURL = null;
 
 			try{
@@ -46,7 +49,7 @@ public class Pokemon{
 			this.num = num;
 			this.name = name;
 			this.types = types;
-			this.spriteURL = spriteURL;
+			this.spriteURL = spriteURLString;
 
 		}catch(JSONException e){
 			e.printStackTrace();
